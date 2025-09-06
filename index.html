@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 25.2.3.2 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { font-size: 10pt; font-family: "Liberation Mono", monospace; background: transparent }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, maximum-scale=1&quot; /&gt;
+  &lt;title&gt;Hamadi ♥ Munazza — 3D Wedding Invitation&lt;/title&gt;
+  &lt;meta name=&quot;description&quot; content=&quot;Rotate, zoom, and view the front and back of our wedding invitation in 3D.&quot; /&gt;
+  &lt;style&gt;
+    :root {
+      --bg: #0b1020; /* deep navy */
+      --gold: #d4af37;
+      --fg: #eaeff7;
+      --hint: #a8b4cc;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(1200px 800px at 70% 10%, #141a33 0%, var(--bg) 55%, #050813 100%);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, sans-serif;
+      height: 100%;
+      overscroll-behavior: none;
+    }
+    #app {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    header, footer {
+      pointer-events: none;
+      text-align: center;
+      padding: 10px 16px;
+      user-select: none;
+    }
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 8px 0 4px;
+      color: var(--fg);
+    }
+    header p {
+      margin: 0;
+      color: var(--hint);
+      font-size: 13px;
+    }
+    #scene {
+      position: relative;
+      min-height: 0;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .hud {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 14, 30, 0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--fg);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .hud span {
+      white-space: nowrap;
+      opacity: 0.9;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold);
+      display: inline-block; margin-right: 6px;
+      box-shadow: 0 0 10px rgba(212,175,55,0.8);
+    }
+    .badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      font-size: 11px;
+      color: var(--gold);
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.25);
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    footer {
+      font-size: 12px;
+      color: var(--hint);
+    }
+    /* Accessibility fallback text (hidden visually, readable by screen readers) */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* Small screens: keep HUD readable */
+    @media (max-width: 420px) {
+      .hud { font-size: 11px; gap: 8px; }
+      header h1 { font-size: 16px; }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id=&quot;app&quot; aria-label=&quot;3D Wedding Invitation Viewer&quot;&gt;
+    &lt;header&gt;
+      &lt;h1&gt;Hamadi ♥ Munazza — Wedding Invitation&lt;/h1&gt;
+      &lt;p&gt;Drag to rotate • Scroll/pinch to zoom • Double&#8209;tap/double&#8209;click to reset&lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;div id=&quot;scene&quot; role=&quot;application&quot; aria-roledescription=&quot;interactive 3D invitation&quot;&gt;
+      &lt;div class=&quot;badge&quot;&gt;3D Card • Front &amp; Back&lt;/div&gt;
+      &lt;div class=&quot;hud&quot; aria-hidden=&quot;true&quot;&gt;
+        &lt;span&gt;&lt;i class=&quot;dot&quot;&gt;&lt;/i&gt;Drag: rotate&lt;/span&gt;
+        &lt;span&gt;&lt;i class=&quot;dot&quot;&gt;&lt;/i&gt;Scroll/Pinch: zoom&lt;/span&gt;
+        &lt;span&gt;&lt;i class=&quot;dot&quot;&gt;&lt;/i&gt;Double&#8209;click: reset&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;p class=&quot;sr-only&quot;&gt;
+        This page shows a rotatable 3D card. Front: In the Name of Allah… Mohammed Ahamed (Hamadi) and Munazza — Nikah on Sunday, 14th September 2025 at 12:00 p.m., Gousiya Shadi Mahal, Hosadurga; Valima on Monday, 15th September 2025 at 2:00 p.m., Jamiya Shadi Mahal, Challakere. Back: With best compliments — Relatives &amp; Friends. Your presence, smiles &amp; duas will make our happiness complete. H ♥ M.
+      &lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;footer&gt;
+      View best in portrait on mobile. Images: front.jpg, back.jpg (place next to this file).
+    &lt;/footer&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Three.js + Controls (ES modules from a fast CDN) --&gt;
+  &lt;script type=&quot;module&quot;&gt;
+    import * as THREE from &quot;https://unpkg.com/three@0.160.1/build/three.module.js&quot;;
+    import { OrbitControls } from &quot;https://unpkg.com/three@0.160.1/examples/jsm/controls/OrbitControls.js&quot;;
+
+    // Basic scene
+    const container = document.getElementById(&quot;scene&quot;);
+    const scene = new THREE.Scene();
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0.8, 0.6, 2.2);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: &quot;high-performance&quot; });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.shadowMap.enabled = false;
+    container.appendChild(renderer.domElement);
+
+    // Subtle environment feel
+    scene.background = null;
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x202030, 0.65);
+    hemi.position.set(0, 1, 0);
+    scene.add(hemi);
+
+    // Gold-ish highlight that moves as card rotates
+    const keyLight = new THREE.DirectionalLight(0xffe7a3, 0.65);
+    keyLight.position.set(2.0, 1.5, 1.8);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
+    rimLight.position.set(-2.5, -1.0, -2.0);
+    scene.add(rimLight);
+
+    // Card geometry (w:h ~ 2:3 or 3:4; adjust to match your artwork ratio)
+    // Using 3:4 portrait (0.9w x 1.2h meters). Increase segments for smoother anisotropy.
+    const CARD_WIDTH = 0.90;
+    const CARD_HEIGHT = 1.20;
+    const CARD_THICKNESS = 0.006; // 6mm visual thickness
+
+    // Texture loader with nice filtering
+    const loader = new THREE.TextureLoader();
+    function loadTex(path) {
+      const t = loader.load(path);
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.magFilter = THREE.LinearFilter;
+      return t;
+    }
+
+    const frontTex = loadTex(&quot;./front.jpg&quot;);
+    const backTex  = loadTex(&quot;./back.jpg&quot;);
+
+    // Materials: slightly glossy to give a foil-like shimmer to gold areas
+    const frontMat = new THREE.MeshPhysicalMaterial({
+      map: frontTex,
+      metalness: 0.1,
+      roughness: 0.45,
+      reflectivity: 0.35,
+      clearcoat: 0.15,
+      clearcoatRoughness: 0.6
+    });
+
+    const backMat = new THREE.MeshPhysicalMaterial({
+      map: backTex,
+      metalness: 0.08,
+      roughness: 0.5,
+      reflectivity: 0.3,
+      clearcoat: 0.12,
+      clearcoatRoughness: 0.65
+    });
+
+    // We’ll create a thin box for realistic edges, then assign different materials
+    const cardGeo = new THREE.BoxGeometry(CARD_WIDTH, CARD_HEIGHT, CARD_THICKNESS, 1, 1, 1);
+
+    // BoxGeometry has 6 faces; we want:
+    //  - front face (positive Z) -&gt; frontMat
+    //  - back face (negative Z) -&gt; backMat
+    //  - edges -&gt; a dark navy material
+    const edgeMat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color(&quot;#0b1020&quot;),
+      metalness: 0.05,
+      roughness: 0.65
+    });
+
+    // Material order for BoxGeometry: +X, -X, +Y, -Y, +Z, -Z
+    const materials = [edgeMat, edgeMat, edgeMat, edgeMat, frontMat, backMat];
+    const card = new THREE.Mesh(cardGeo, materials);
+    card.rotation.x = THREE.MathUtils.degToRad(-8);
+    scene.add(card);
+
+    // Soft shadow ground (faux) for depth
+    const groundGeo = new THREE.PlaneGeometry(5, 5);
+    const groundMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.15
+    });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.75;
+    ground.renderOrder = -1;
+    scene.add(ground);
+
+    // Subtle card float animation
+    let t0 = performance.now();
+    function floatCard(time) {
+      const t = (time - t0) * 0.001;
+      card.position.y = Math.sin(t * 0.6) * 0.015; // gentle bob
+      keyLight.position.x = 2.0 + Math.sin(t * 0.5) * 0.2; // tiny light drift for shimmer
+    }
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = false;
+    controls.minDistance = 1.2;
+    controls.maxDistance = 4.0;
+    controls.minPolarAngle = THREE.MathUtils.degToRad(35);
+    controls.maxPolarAngle = THREE.MathUtils.degToRad(85);
+    controls.target.set(0, 0, 0);
+
+    // Double-click/tap to reset view
+    const resetView = () =&gt; {
+      controls.target.set(0, 0, 0);
+      camera.position.set(0.8, 0.6, 2.2);
+      controls.update();
+    };
+    renderer.domElement.addEventListener(&quot;dblclick&quot;, resetView, { passive: true });
+    renderer.domElement.addEventListener(&quot;touchend&quot;, (e) =&gt; {
+      if (e.touches &amp;&amp; e.touches.length === 0 &amp;&amp; e.changedTouches &amp;&amp; e.changedTouches.length === 1) {
+        // Simple double-tap detector
+        const now = Date.now();
+        if (!window.__lastTapTime) window.__lastTapTime = 0;
+        if (now - window.__lastTapTime &lt; 300) resetView();
+        window.__lastTapTime = now;
+      }
+    }, { passive: true });
+
+    // Handle resize
+    function onResize() {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener(&quot;resize&quot;, onResize);
+    onResize();
+
+    // Render loop
+    function animate(time) {
+      requestAnimationFrame(animate);
+      floatCard(time || 0);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Helpful console tip for file names
+    console.log(&quot;Make sure your images are named exactly front.jpg and back.jpg and placed next to index.html.&quot;);
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
